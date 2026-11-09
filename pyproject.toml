@@ -1,7 +1,7 @@
 [project]
 name = "task-registry-service"
 version = "0.1.0"
-description = "Add your description here"
+description = "Task Registry Service with Grounded LLM Extraction"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -16,3 +16,7 @@ dependencies = [
     "python-dotenv>=1.2.4",
     "uvicorn>=0.54.0",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

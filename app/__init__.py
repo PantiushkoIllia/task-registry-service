@@ -1,0 +1,1 @@
+"""Task Registry Service package."""
