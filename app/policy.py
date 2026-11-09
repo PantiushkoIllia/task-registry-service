@@ -1,7 +1,7 @@
 """Application policy and verification engine for LLM task proposals."""
 
 import re
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from typing import Union, Dict, Any, List, Optional
 from .models import TaskProposal, ProposalOutcome, TaskCreate
 
@@ -14,6 +14,29 @@ AMBIGUITY_MARKERS = [
     " під питанням ",
     "або передати",
 ]
+
+
+def calculate_nearest_friday(ref_date: Optional[date] = None) -> str:
+    """
+    Обчислює дату найближчої п'ятниці відповідно до PM-правила CR-001:
+    - Пн-Чт (0..3): п'ятниця цього тижня.
+    - Пт (4): переноситься на п'ятницю наступного тижня (+7 днів).
+    - Сб-Нд (5..6): п'ятниця наступного тижня.
+    """
+    if ref_date is None:
+        ref_date = date.today()
+
+    weekday = ref_date.weekday()
+    if weekday < 4:
+        delta = 4 - weekday
+    elif weekday == 4:
+        delta = 7
+    else:
+        delta = (4 - weekday) + 7
+
+    target_date = ref_date + timedelta(days=delta)
+    return target_date.strftime("%Y-%m-%d")
+
 
 
 def review_proposal(

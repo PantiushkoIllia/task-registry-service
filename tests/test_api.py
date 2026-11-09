@@ -72,16 +72,16 @@ def test_ai_create_valid(client):
 
 
 def test_ai_missing_or_ambiguous(client):
-    """AC-4: Неповний або неоднозначний текст повертає 422 needs_clarification без зміни сховища."""
+    """AC-4: Неповний (без відповідального) або неоднозначний текст повертає 422 needs_clarification без зміни сховища."""
     before_tasks = client.get("/tasks").json()
 
-    # Відсутня дата
+    # Відсутній виконавець
     resp = client.post("/tasks/from-text", json={
-        "text": "Оновити залежності; опис: патчі безпеки; відповідальний: Олексій"
+        "text": "Оновити залежності; опис: патчі безпеки; строк: 2026-11-20"
     })
     assert resp.status_code == 422
     assert resp.json()["status"] == "needs_clarification"
-    assert "due_date" in resp.json()["missing_fields"]
+    assert "assignee" in resp.json()["missing_fields"]
 
     # Суперечливий текст (конфлікт відповідальних)
     resp_conflict = client.post("/tasks/from-text", json={
